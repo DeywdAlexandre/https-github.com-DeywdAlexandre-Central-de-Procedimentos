@@ -167,28 +167,65 @@ remindersRouter.post('/record-send', requireAuth, requireEditor, async (req: Aut
 remindersRouter.put('/:id/status', requireAuth, requireEditor, async (req: AuthRequest, res) => {
   try {
     const reminderId = Number(req.params.id);
-    const { status, errorMessage } = req.body;
+    const { status, errorMessage, hearingId, officerId } = req.body;
 
     if (!status) {
       return res.status(400).json({ error: 'Status é obrigatório.' });
     }
 
-    const [updated] = await db
-      .update(hearingReminders)
-      .set({
-        status,
-        sentAt: status === 'enviado' || status === 'entregue' ? new Date() : undefined,
-        errorMessage: errorMessage || null,
-        updatedAt: new Date(),
-      })
-      .where(eq(hearingReminders.id, reminderId))
-      .returning();
+    let updated: any = null;
+
+    if (reminderId && reminderId < 900000) {
+      const [resUpdate] = await db
+        .update(hearingReminders)
+        .set({
+          status,
+          sentAt: status === 'enviado' || status === 'entregue' ? new Date() : undefined,
+          errorMessage: errorMessage || null,
+          updatedAt: new Date(),
+        })
+        .where(eq(hearingReminders.id, reminderId))
+        .returning();
+      updated = resUpdate;
+    }
+
+    // Se o lembrete ainda não estava gravado na tabela mas veio com hearingId e officerId
+    if (!updated && hearingId && officerId) {
+      const today = getTodayDateBR();
+      const idempotencyKey = `rem-${hearingId}-${officerId}-${today}`;
+
+      const [recorded] = await db
+        .insert(hearingReminders)
+        .values({
+          hearingId: Number(hearingId),
+          officerId: Number(officerId),
+          scheduledFor: today,
+          channel: 'whatsapp_manual',
+          status: status || 'enviado',
+          sentAt: status === 'enviado' || status === 'entregue' ? new Date() : null,
+          sentBy: req.user!.email,
+          errorMessage: errorMessage || null,
+          idempotencyKey,
+        })
+        .onConflictDoUpdate({
+          target: hearingReminders.idempotencyKey,
+          set: {
+            status: status || 'enviado',
+            sentAt: status === 'enviado' || status === 'entregue' ? new Date() : null,
+            sentBy: req.user!.email,
+            errorMessage: errorMessage || null,
+            updatedAt: new Date(),
+          },
+        })
+        .returning();
+      updated = recorded;
+    }
 
     if (!updated) {
       return res.status(404).json({ error: 'Lembrete não encontrado.' });
     }
 
-    await logAudit('UPDATE_REMINDER_STATUS', 'reminder', reminderId, req.user!.email, {
+    await logAudit('UPDATE_REMINDER_STATUS', 'reminder', updated.id, req.user!.email, {
       newStatus: status,
     });
 

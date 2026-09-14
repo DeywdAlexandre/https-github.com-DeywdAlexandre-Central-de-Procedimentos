@@ -9,6 +9,7 @@ import { batchRouter } from './batch.routes.ts';
 import { noticesRouter } from './notices.routes.ts';
 import { remindersRouter } from './reminders.routes.ts';
 import { teamRouter } from './team.routes.ts';
+import { usersRouter } from './users.routes.ts';
 import { auditRouter } from './audit.routes.ts';
 import { configsRouter } from './configs.routes.ts';
 
@@ -24,5 +25,6 @@ apiRouter.use('/batch', batchRouter);
 apiRouter.use('/official-notice', noticesRouter);
 apiRouter.use('/reminders', remindersRouter);
 apiRouter.use('/team', teamRouter);
+apiRouter.use('/users', usersRouter);
 apiRouter.use('/audit-logs', auditRouter);
 apiRouter.use('/configs', configsRouter);

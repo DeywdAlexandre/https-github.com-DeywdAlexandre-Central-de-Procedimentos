@@ -96,6 +96,7 @@ function AppContent() {
           status: a.status || 'pendente',
           sentAt: a.sentAt || null,
           errorMessage: a.errorMessage || null,
+          isSynthetic: false,
         }));
 
         const recordedSet = new Set(attemptsList.map((a: any) => `${a.hearingId}-${a.officerId}`));
@@ -103,7 +104,7 @@ function AppContent() {
         const fromTom: HearingReminder[] = tomHearingsList
           .filter((th: any) => !recordedSet.has(`${th.hearingId}-${th.officerId}`))
           .map((th: any, idx: number) => ({
-            id: th.hearingOfficerId || 900000 + idx,
+            id: 900000 + (th.hearingOfficerId || idx + 1),
             hearingId: th.hearingId,
             officerId: th.officerId,
             targetType: 'audiencia',
@@ -123,6 +124,7 @@ function AppContent() {
             status: 'pendente',
             sentAt: null,
             errorMessage: null,
+            isSynthetic: true,
           }));
 
         normalizedReminders = [...fromAttempts, ...fromTom];

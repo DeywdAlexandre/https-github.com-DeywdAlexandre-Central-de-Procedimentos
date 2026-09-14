@@ -42,8 +42,8 @@ export const RemindersView: React.FC<RemindersViewProps> = ({
 
   const handleUpdateStatus = async (reminder: HearingReminder, newStatus: string) => {
     try {
-      // Se for um lembrete sintético (gerado a partir das audiências de amanhã sem registro no banco)
-      if (reminder.id >= 900000 && reminder.hearingId && reminder.officerId) {
+      // Se for um lembrete sintético ou ainda não persistido
+      if ((reminder.isSynthetic || reminder.id >= 900000) && reminder.hearingId && reminder.officerId) {
         await apiRequest('/api/reminders/record-send', token, {
           method: 'POST',
           body: JSON.stringify({
@@ -58,7 +58,11 @@ export const RemindersView: React.FC<RemindersViewProps> = ({
       } else {
         await apiRequest(`/api/reminders/${reminder.id}/status`, token, {
           method: 'PUT',
-          body: JSON.stringify({ status: newStatus }),
+          body: JSON.stringify({
+            status: newStatus,
+            hearingId: reminder.hearingId,
+            officerId: reminder.officerId,
+          }),
         });
       }
       await onRefresh();
