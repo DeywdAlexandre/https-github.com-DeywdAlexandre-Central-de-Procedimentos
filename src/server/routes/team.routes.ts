@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { db } from '../../db/index.ts';
 import { allowlist, users } from '../../db/schema.ts';
-import { eq, desc } from 'drizzle-orm';
+import { eq, desc, and, sql } from 'drizzle-orm';
 import { requireAuth, requireAdmin, AuthRequest, INITIAL_BOOTSTRAP_ADMIN } from '../../middleware/auth.ts';
 import { logAudit } from '../helpers/audit.ts';
 
@@ -10,8 +10,26 @@ export const teamRouter = Router();
 // GET /api/team/allowlist
 teamRouter.get('/allowlist', requireAuth, requireAdmin, async (req: AuthRequest, res) => {
   try {
+    try {
+      await db
+        .update(allowlist)
+        .set({ name: req.user?.name || 'Deywd (Administrador Inicial)' })
+        .where(and(eq(allowlist.email, INITIAL_BOOTSTRAP_ADMIN), sql`${allowlist.name} ILIKE '%Deyvison%'`));
+    } catch (e) {
+      // ignore
+    }
+
     const list = await db.select().from(allowlist).orderBy(desc(allowlist.createdAt));
-    res.json(list);
+    const formatted = list.map((item) => {
+      if (item.email === INITIAL_BOOTSTRAP_ADMIN && item.name?.toLowerCase().includes('deyvison')) {
+        return {
+          ...item,
+          name: item.name.replace(/deyvison/gi, 'Deywd'),
+        };
+      }
+      return item;
+    });
+    res.json(formatted);
   } catch (error: any) {
     res.status(500).json({ error: 'Falha ao buscar membros da equipe.' });
   }

@@ -51,10 +51,11 @@ export const requireAuth = async (
 
       // Garantir na tabela allowlist
       try {
+        const adminName = decodedToken.name || 'Deywd (Administrador Inicial)';
         await db.insert(allowlist)
           .values({
             email,
-            name: decodedToken.name || 'Administrador Inicial',
+            name: adminName,
             role: 'administrador',
             status: 'ativo',
             invitedBy: 'sistema',
@@ -62,7 +63,7 @@ export const requireAuth = async (
           })
           .onConflictDoUpdate({
             target: allowlist.email,
-            set: { role: 'administrador', status: 'ativo' },
+            set: { name: adminName, role: 'administrador', status: 'ativo' },
           });
       } catch (err) {
         console.error('Erro ao sincronizar allowlist do bootstrap:', err);

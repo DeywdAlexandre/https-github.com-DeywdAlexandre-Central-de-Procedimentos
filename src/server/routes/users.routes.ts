@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { db } from '../../db/index.ts';
 import { allowlist, users } from '../../db/schema.ts';
-import { eq, desc } from 'drizzle-orm';
+import { eq, desc, and, sql } from 'drizzle-orm';
 import { requireAuth, requireAdmin, AuthRequest, INITIAL_BOOTSTRAP_ADMIN } from '../../middleware/auth.ts';
 import { logAudit } from '../helpers/audit.ts';
 
@@ -10,17 +10,33 @@ export const usersRouter = Router();
 // GET /api/users - Retorna a lista de usuários para o painel de configurações
 usersRouter.get('/', requireAuth, requireAdmin, async (req: AuthRequest, res) => {
   try {
+    // Corrige automaticamente no banco de dados qualquer registro legado com "Deyvison"
+    try {
+      await db
+        .update(allowlist)
+        .set({ name: req.user?.name || 'Deywd (Administrador Inicial)' })
+        .where(and(eq(allowlist.email, INITIAL_BOOTSTRAP_ADMIN), sql`${allowlist.name} ILIKE '%Deyvison%'`));
+    } catch (dbErr) {
+      // continua caso falhe
+    }
+
     const list = await db.select().from(allowlist).orderBy(desc(allowlist.createdAt));
     
     // Mapear para o formato esperado pelo frontend (UserProfile)
-    const formatted = list.map((item) => ({
-      id: item.id,
-      email: item.email,
-      displayName: item.name || item.email.split('@')[0],
-      role: item.role === 'somente_leitura' ? 'leitor' : item.role,
-      active: item.status === 'ativo',
-      createdAt: item.createdAt,
-    }));
+    const formatted = list.map((item) => {
+      let displayName = item.name || item.email.split('@')[0];
+      if (item.email === INITIAL_BOOTSTRAP_ADMIN) {
+        displayName = displayName.replace(/deyvison/gi, 'Deywd');
+      }
+      return {
+        id: item.id,
+        email: item.email,
+        displayName,
+        role: item.role === 'somente_leitura' ? 'leitor' : item.role,
+        active: item.status === 'ativo',
+        createdAt: item.createdAt,
+      };
+    });
 
     res.json(formatted);
   } catch (error: any) {
