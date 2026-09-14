@@ -1,0 +1,6 @@
+{
+  "name": "Central de Procedimentos",
+  "description": "Controle administrativo interno de procedimentos disciplinares (PDS e Sindicâncias), audiências judiciais, ofícios de apresentação e prazos da PMPE.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
