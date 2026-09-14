@@ -22,6 +22,7 @@ import {
   HearingReminder,
   DashboardMetrics,
 } from './types.ts';
+import { getTodayDateBR, addDaysBR } from './lib/deadline-calculator.ts';
 import { Shield, Lock, AlertCircle, RefreshCw, LogIn } from 'lucide-react';
 
 function AppContent() {
@@ -132,10 +133,8 @@ function AppContent() {
         setDashboardMetrics(dashData);
       } else {
         // Montar métricas calculadas em memória caso o backend retorne vazio ou falhe
-        const todayStr = new Date().toISOString().split('T')[0];
-        const in7DaysDate = new Date();
-        in7DaysDate.setDate(in7DaysDate.getDate() + 7);
-        const in7DaysStr = in7DaysDate.toISOString().split('T')[0];
+        const todayStr = getTodayDateBR();
+        const in7DaysStr = addDaysBR(todayStr, 7);
 
         const overdueCount = loadedDeadlines.filter(
           (d: any) =>

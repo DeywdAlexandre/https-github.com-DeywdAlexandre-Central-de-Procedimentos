@@ -60,6 +60,30 @@ export function formatDateBR(isoDate: string): string {
   return isoDate;
 }
 
+/**
+ * Retorna a data atual no fuso horário oficial de Pernambuco (America/Recife, UTC-3) no formato YYYY-MM-DD.
+ * Evita o bug de virada de dia precoce gerado pelo UTC (que muda de dia às 21h em PE).
+ */
+export function getTodayDateBR(): string {
+  const formatter = new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'America/Recife',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  });
+  return formatter.format(new Date());
+}
+
+/**
+ * Adiciona dias a uma data YYYY-MM-DD mantendo consistência de data.
+ */
+export function addDaysBR(dateStr: string, days: number): string {
+  const d = parseDateISO(dateStr);
+  d.setUTCDate(d.getUTCDate() + days);
+  return formatDateISO(d);
+}
+
+
 export function calculateDeadline(
   startDateStr: string,
   daysCount: number,

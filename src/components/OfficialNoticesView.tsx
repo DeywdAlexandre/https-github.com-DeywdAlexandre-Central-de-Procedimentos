@@ -17,7 +17,7 @@ import {
   Phone,
 } from 'lucide-react';
 import { JudicialHearing, PoliceOfficer } from '../types.ts';
-import { formatDateBR } from '../lib/deadline-calculator.ts';
+import { formatDateBR, getTodayDateBR } from '../lib/deadline-calculator.ts';
 import { buildHearingWhatsAppMessage, openWhatsAppChat } from '../lib/whatsapp-messages.ts';
 import { useAuth } from '../context/AuthContext.tsx';
 import { apiRequest } from '../lib/api.ts';
@@ -116,7 +116,7 @@ export const OfficialNoticesView: React.FC<OfficialNoticesViewProps> = ({
     }
   };
 
-  const today = new Date().toISOString().split('T')[0];
+  const today = getTodayDateBR();
 
   const filteredNotices = allNotices.filter((n) => {
     if (filterStatus === 'pendentes_geral') {
