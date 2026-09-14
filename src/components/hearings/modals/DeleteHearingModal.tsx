@@ -72,7 +72,7 @@ export const DeleteHearingModal: React.FC<DeleteHearingModalProps> = ({
               type="button"
               onClick={onClose}
               disabled={isDeleting}
-              className="px-3 py-1.5 text-xs font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors disabled:opacity-50"
+              className="btn-3d-secondary px-3.5 py-1.5 rounded-lg text-xs disabled:opacity-50"
             >
               Cancelar
             </button>
@@ -80,7 +80,7 @@ export const DeleteHearingModal: React.FC<DeleteHearingModalProps> = ({
               type="button"
               onClick={handleDelete}
               disabled={isDeleting}
-              className="px-4 py-1.5 text-xs font-semibold text-white bg-rose-600 hover:bg-rose-700 rounded-lg transition-colors shadow-2xs flex items-center gap-1.5 disabled:opacity-50"
+              className="btn-3d-danger px-4 py-1.5 rounded-lg text-xs flex items-center gap-1.5 disabled:opacity-50"
             >
               <Trash2 className="w-3.5 h-3.5" />
               <span>{isDeleting ? 'Excluindo...' : 'Sim, Excluir Audiência'}</span>

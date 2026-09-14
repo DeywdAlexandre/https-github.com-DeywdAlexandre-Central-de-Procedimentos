@@ -150,7 +150,7 @@ export const ProcedureDetailDrawer: React.FC<ProcedureDetailDrawerProps> = ({
             {canEdit && (
               <button
                 onClick={onOpenTimelineModal}
-                className="text-xs font-semibold text-blue-600 hover:text-blue-800"
+                className="btn-3d-primary px-2.5 py-1 rounded-lg text-xs"
               >
                 + Novo Andamento
               </button>

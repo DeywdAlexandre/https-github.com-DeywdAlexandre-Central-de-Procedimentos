@@ -138,14 +138,14 @@ export const ExtendDeadlineModal: React.FC<ExtendDeadlineModalProps> = ({
               type="button"
               onClick={onClose}
               disabled={isSubmitting}
-              className="px-4 py-2 text-xs font-semibold text-slate-600 bg-slate-100 rounded-lg disabled:opacity-50"
+              className="btn-3d-secondary px-4 py-2 rounded-lg text-xs disabled:opacity-50"
             >
               Cancelar
             </button>
             <button
               type="submit"
               disabled={isSubmitting}
-              className="px-5 py-2 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-lg shadow-2xs disabled:opacity-50"
+              className="btn-3d-primary px-5 py-2 rounded-lg text-xs disabled:opacity-50"
             >
               {isSubmitting ? 'Salvando...' : 'Confirmar Alteração'}
             </button>

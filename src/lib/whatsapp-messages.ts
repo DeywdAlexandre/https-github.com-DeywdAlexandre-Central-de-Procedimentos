@@ -71,29 +71,131 @@ export function buildHearingWhatsAppMessage(params: WhatsAppHearingMessageParams
 }
 
 /**
- * Gera a URL para abertura do WhatsApp Web ou Mobile com a mensagem formatada.
- * Utiliza o protocolo universal api.whatsapp.com / wa.me que funciona perfeitamente
- * tanto com o aplicativo nativo do WhatsApp Desktop instalado no PC quanto no WhatsApp Web.
+ * Detecta se o dispositivo atual é um smartphone ou tablet (iOS/Android)
  */
-export function createWhatsAppUrl(phone: string | null | undefined, message: string): string {
-  if (!phone) return '';
-  const cleanPhone = phone.replace(/\D/g, '');
-  // Adiciona código do país 55 caso o número brasileiro não possua
-  const fullPhone = cleanPhone.length <= 11 ? `55${cleanPhone}` : cleanPhone;
-  const encodedMsg = encodeURIComponent(message);
-  return `https://web.whatsapp.com/send?phone=${fullPhone}&text=${encodedMsg}`;
+export function isMobileDevice(): boolean {
+  if (typeof window === 'undefined' || typeof navigator === 'undefined') return false;
+  const userAgent = navigator.userAgent || navigator.vendor || (window as any).opera || '';
+  const isMobileUA = /android|iphone|ipad|ipod|blackberry|iemobile|opera mini|mobile/i.test(userAgent);
+  const isSmallScreen = window.matchMedia && window.matchMedia('(max-width: 768px)').matches;
+  return isMobileUA || isSmallScreen;
 }
 
 /**
- * Abre o WhatsApp Web ou Desktop reutilizando a mesma aba/janela ('whatsapp_tab')
- * em vez de abrir uma nova aba a cada clique ('_blank').
- * Caso o usuário já tenha o WhatsApp aberto nessa aba, o navegador apenas navega nela
- * e foca a janela existente.
+ * Formata o telefone garantindo o código DDI do Brasil (55)
  */
-export function openWhatsAppChat(phone: string | null | undefined, message: string): void {
-  const url = createWhatsAppUrl(phone, message);
-  if (!url) return;
-  // Usar nome fixo de target 'whatsapp_web' reutiliza a mesma aba no navegador
-  window.open(url, 'whatsapp_web');
+export function formatFullPhone(phone: string | null | undefined): string {
+  if (!phone) return '';
+  const clean = phone.replace(/\D/g, '');
+  if (!clean) return '';
+  return clean.length <= 11 ? `55${clean}` : clean;
 }
+
+/**
+ * Gera a URL adequada para abertura do WhatsApp.
+ * - No mobile: usa api.whatsapp.com (ou protocolo whatsapp://) para acionar o app instalado.
+ * - No desktop: usa web.whatsapp.com para o navegador, ou whatsapp:// se configurado para app do Windows.
+ */
+export function createWhatsAppUrl(
+  phone: string | null | undefined,
+  message: string,
+  forceTarget?: 'auto' | 'app' | 'web'
+): string {
+  const fullPhone = formatFullPhone(phone);
+  if (!fullPhone) return '';
+  const encodedMsg = encodeURIComponent(message);
+  const mobile = isMobileDevice();
+
+  if (forceTarget === 'app' || (mobile && forceTarget !== 'web')) {
+    // Protocolo nativo de aplicativo
+    return `whatsapp://send?phone=${fullPhone}&text=${encodedMsg}`;
+  }
+
+  if (mobile) {
+    // Fallback universal mobile
+    return `https://api.whatsapp.com/send?phone=${fullPhone}&text=${encodedMsg}`;
+  }
+
+  // Desktop Web
+  return `https://web.whatsapp.com/send?phone=${fullPhone}&text=${encodedMsg}`;
+}
+
+// Referência em memória da janela do WhatsApp Web aberta no Desktop
+let whatsappWindowRef: Window | null = null;
+
+/**
+ * Abre a conversa do WhatsApp:
+ * 1. No celular: Aciona diretamente o aplicativo WhatsApp oficial instalado no aparelho.
+ * 2. No computador: Reutiliza a mesma aba do WhatsApp Web aberta anteriormente, evitando
+ *    a criação de dezenas de abas repetidas, ou aciona o WhatsApp Desktop do Windows caso preferido.
+ */
+export function openWhatsAppChat(
+  phone: string | null | undefined,
+  message: string,
+  options?: { preferApp?: boolean }
+): void {
+  const fullPhone = formatFullPhone(phone);
+  if (!fullPhone) {
+    alert('Número de telefone não informado para este policial.');
+    return;
+  }
+
+  const encodedMsg = encodeURIComponent(message);
+  const mobile = isMobileDevice();
+  const preferDesktopApp =
+    options?.preferApp ??
+    (typeof localStorage !== 'undefined' &&
+      localStorage.getItem('whatsapp_desktop_preferred') === 'true');
+
+  if (mobile) {
+    // -------------------------------------------------------------
+    // NO CELULAR: ABRIR O APLICATIVO NATIVO
+    // -------------------------------------------------------------
+    // O protocolo whatsapp:// abre o app WhatsApp instantaneamente
+    const nativeAppUrl = `whatsapp://send?phone=${fullPhone}&text=${encodedMsg}`;
+    const universalWebUrl = `https://api.whatsapp.com/send?phone=${fullPhone}&text=${encodedMsg}`;
+
+    // Tentamos abrir o protocolo nativo
+    const clickedAt = Date.now();
+    window.location.href = nativeAppUrl;
+
+    // Caso o dispositivo não responda ao protocolo em até 1.5s e a página continue visível
+    setTimeout(() => {
+      if (Date.now() - clickedAt < 2000 && !document.hidden) {
+        window.location.href = universalWebUrl;
+      }
+    }, 1200);
+    return;
+  }
+
+  // -------------------------------------------------------------
+  // NO COMPUTADOR (DESKTOP)
+  // -------------------------------------------------------------
+  if (preferDesktopApp) {
+    // Se o usuário prefere o aplicativo oficial do WhatsApp para Windows instalado
+    window.location.href = `whatsapp://send?phone=${fullPhone}&text=${encodedMsg}`;
+    return;
+  }
+
+  // WhatsApp Web no navegador:
+  const webUrl = `https://web.whatsapp.com/send?phone=${fullPhone}&text=${encodedMsg}`;
+
+  // Se já temos a janela aberta e ela não foi fechada pelo usuário, reaproveitamos navegando nela
+  if (whatsappWindowRef && !whatsappWindowRef.closed) {
+    try {
+      whatsappWindowRef.location.href = webUrl;
+      whatsappWindowRef.focus();
+      return;
+    } catch {
+      // Se políticas cross-origin restringirem a atribuição direta do href, abre usando target fixo
+    }
+  }
+
+  // Abre nova aba e guarda a referência para os próximos cliques
+  whatsappWindowRef = window.open(webUrl, 'central_procedimentos_whatsapp');
+  if (whatsappWindowRef) {
+    whatsappWindowRef.focus();
+  }
+}
+
 

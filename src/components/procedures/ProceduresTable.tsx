@@ -149,7 +149,7 @@ export const ProceduresTable: React.FC<ProceduresTableProps> = ({
               <button
                 id={`btn-detail-proc-${proc.id}`}
                 onClick={() => onSelectProcedure && onSelectProcedure(proc.id)}
-                className="px-3 py-1.5 text-xs font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors flex items-center gap-1"
+                className="btn-3d-secondary px-3 py-1.5 text-xs rounded-lg flex items-center gap-1"
               >
                 <Eye className="w-3.5 h-3.5" />
                 <span>Detalhar</span>
@@ -160,7 +160,7 @@ export const ProceduresTable: React.FC<ProceduresTableProps> = ({
                   <button
                     id={`btn-edit-proc-${proc.id}`}
                     onClick={() => onOpenEdit(proc)}
-                    className="p-1.5 text-slate-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                    className="btn-3d-secondary p-1.5 rounded-lg text-slate-600 hover:text-blue-600"
                     title="Editar dados cadastrais"
                   >
                     <Edit2 className="w-4 h-4" />
@@ -168,7 +168,7 @@ export const ProceduresTable: React.FC<ProceduresTableProps> = ({
                   <button
                     id={`btn-archive-proc-${proc.id}`}
                     onClick={() => onToggleArchive(proc)}
-                    className="p-1.5 text-slate-500 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition-colors"
+                    className="btn-3d-secondary p-1.5 rounded-lg text-slate-600 hover:text-amber-600"
                     title={proc.archived ? 'Desarquivar' : 'Arquivar'}
                   >
                     <Archive className="w-4 h-4" />

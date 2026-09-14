@@ -111,7 +111,7 @@ export const DeadlinesFilters: React.FC<DeadlinesFiltersProps> = ({
         <button
           id="btn-export-deadlines-csv"
           onClick={() => exportDeadlinesToCSV(filteredDeadlines)}
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors"
+          className="btn-3d-secondary px-3 py-1.5 rounded-lg text-xs"
         >
           <Download className="w-3.5 h-3.5 text-slate-500" />
           <span>Exportar CSV</span>
@@ -121,7 +121,7 @@ export const DeadlinesFilters: React.FC<DeadlinesFiltersProps> = ({
           <button
             id="btn-add-deadline-main"
             onClick={onOpenNewDeadline}
-            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-lg shadow-2xs shadow-blue-600/20 transition-colors"
+            className="btn-3d-primary px-3.5 py-1.5 rounded-lg text-xs"
           >
             <Plus className="w-3.5 h-3.5" />
             <span>Novo Prazo</span>

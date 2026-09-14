@@ -76,7 +76,7 @@ export const ProceduresFilters: React.FC<ProceduresFiltersProps> = ({
         <button
           id="btn-new-procedure-main"
           onClick={onOpenCreate}
-          className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-lg shadow-2xs shadow-blue-600/20 transition-colors shrink-0"
+          className="btn-3d-primary px-3.5 py-2 text-xs rounded-lg shrink-0"
         >
           <Plus className="w-4 h-4" />
           <span>Novo Procedimento</span>

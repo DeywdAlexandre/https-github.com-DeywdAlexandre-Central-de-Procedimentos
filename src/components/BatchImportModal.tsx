@@ -176,7 +176,7 @@ export const BatchImportModal: React.FC<BatchImportModalProps> = ({
                 type="button"
                 disabled={!rawText.trim() || analyzing}
                 onClick={handleAnalyze}
-                className="px-4 py-2 text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 rounded-lg shadow-2xs transition-colors shrink-0 flex items-center gap-1.5"
+                className="btn-3d-emerald px-4 py-2 rounded-lg text-xs shrink-0 disabled:opacity-50"
               >
                 {analyzing ? 'Analisando...' : 'Analisar e Processar Prévia'}
                 <ArrowRight className="w-3.5 h-3.5" />
@@ -346,7 +346,7 @@ export const BatchImportModal: React.FC<BatchImportModalProps> = ({
           <button
             type="button"
             onClick={onClose}
-            className="px-4 py-2 text-xs font-semibold text-slate-700 bg-slate-200 hover:bg-slate-300 rounded-lg transition-colors"
+            className="btn-3d-secondary px-4 py-2 rounded-lg text-xs"
           >
             {commitResult ? 'Fechar' : 'Cancelar'}
           </button>
@@ -356,7 +356,7 @@ export const BatchImportModal: React.FC<BatchImportModalProps> = ({
               type="button"
               disabled={committing}
               onClick={handleCommit}
-              className="px-5 py-2 text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 rounded-lg shadow-2xs shadow-emerald-600/20 transition-colors flex items-center gap-1.5"
+              className="btn-3d-emerald px-5 py-2 rounded-lg text-xs disabled:opacity-50"
             >
               {committing ? 'Gravando no Banco...' : 'Confirmar e Importar Registros'}
             </button>

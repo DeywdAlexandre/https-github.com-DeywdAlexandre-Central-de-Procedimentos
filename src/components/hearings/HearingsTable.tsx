@@ -189,7 +189,7 @@ export const HearingsTable: React.FC<HearingsTableProps> = ({
                   <button
                     id={`btn-manage-hearing-${h.id}`}
                     onClick={() => onManageOfficers(h)}
-                    className="px-2.5 py-1 text-xs font-semibold text-blue-700 bg-blue-50 hover:bg-blue-100 rounded-md transition-colors"
+                    className="btn-3d-secondary px-2.5 py-1 text-xs rounded-md"
                   >
                     Ofícios & Ciência
                   </button>
@@ -199,7 +199,7 @@ export const HearingsTable: React.FC<HearingsTableProps> = ({
                       <button
                         id={`btn-resched-hearing-${h.id}`}
                         onClick={() => onReschedule(h)}
-                        className="p-1.5 text-slate-500 hover:text-amber-600 hover:bg-amber-50 rounded-md transition-colors"
+                        className="btn-3d-secondary p-1.5 rounded-md text-amber-600 hover:text-amber-700"
                         title="Remarcar audiência"
                       >
                         <RotateCcw className="w-4 h-4" />
@@ -208,7 +208,7 @@ export const HearingsTable: React.FC<HearingsTableProps> = ({
                       <button
                         id={`btn-complete-no-term-hearing-${h.id}`}
                         onClick={() => onCompleteWithoutTerm(h)}
-                        className="p-1.5 text-slate-500 hover:text-emerald-700 hover:bg-emerald-50 rounded-md transition-colors"
+                        className="btn-3d-emerald p-1.5 rounded-md"
                         title="Marcar como realizada (sem termo de comparecimento)"
                       >
                         <CheckCircle2 className="w-4 h-4" />
@@ -217,7 +217,7 @@ export const HearingsTable: React.FC<HearingsTableProps> = ({
                       <button
                         id={`btn-did-not-occur-${h.id}`}
                         onClick={() => onDidNotOccur(h)}
-                        className="p-1.5 text-slate-500 hover:text-rose-600 hover:bg-rose-50 rounded-md transition-colors"
+                        className="btn-3d-danger p-1.5 rounded-md"
                         title="Registrar que audiência não ocorreu"
                       >
                         <XCircle className="w-4 h-4" />
@@ -228,7 +228,7 @@ export const HearingsTable: React.FC<HearingsTableProps> = ({
                   <button
                     id={`btn-delete-hearing-${h.id}`}
                     onClick={() => onDelete(h)}
-                    className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-md transition-colors"
+                    className="btn-3d-secondary p-1.5 rounded-md text-slate-400 hover:text-rose-600"
                     title="Excluir audiência judicial"
                   >
                     <Trash2 className="w-4 h-4" />

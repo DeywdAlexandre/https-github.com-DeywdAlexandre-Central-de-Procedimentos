@@ -226,9 +226,9 @@ export const OfficialNoticesView: React.FC<OfficialNoticesViewProps> = ({
             <button
               id="btn-import-notice-from-notices-tab"
               onClick={onOpenOfficialNoticeImport}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-blue-700 bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded-lg shadow-2xs transition-colors"
+              className="btn-3d-primary px-3 py-1.5 rounded-lg text-xs"
             >
-              <FileText className="w-3.5 h-3.5 text-blue-600" />
+              <FileText className="w-3.5 h-3.5" />
               <span>Importar do Ofício</span>
             </button>
           )}
@@ -337,10 +337,10 @@ export const OfficialNoticesView: React.FC<OfficialNoticesViewProps> = ({
                             });
                             openWhatsAppChat(n.officerPhone, msg);
                           }}
-                          className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-semibold text-emerald-800 bg-emerald-50 hover:bg-emerald-100 rounded-lg border border-emerald-200 transition-colors"
+                          className="btn-3d-emerald px-3 py-1.5 rounded-lg text-xs"
                           title="Abrir WhatsApp com processo, data, hora, vara e link"
                         >
-                          <Send className="w-3.5 h-3.5 text-emerald-600" />
+                          <Send className="w-3.5 h-3.5" />
                           <span>WhatsApp</span>
                         </button>
                       )}
@@ -353,7 +353,7 @@ export const OfficialNoticesView: React.FC<OfficialNoticesViewProps> = ({
                               noticeStatus: 'assinado',
                             })
                           }
-                          className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-semibold text-blue-700 bg-blue-50 hover:bg-blue-100 rounded-lg border border-blue-200 transition-colors"
+                          className="btn-3d-primary px-3 py-1.5 rounded-lg text-xs"
                         >
                           <Check className="w-3.5 h-3.5" />
                           <span>Registrar Assinatura</span>
@@ -368,7 +368,7 @@ export const OfficialNoticesView: React.FC<OfficialNoticesViewProps> = ({
                               noticeStatus: 'ciencia_registrada',
                             })
                           }
-                          className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-semibold text-indigo-700 bg-indigo-50 hover:bg-indigo-100 rounded-lg border border-indigo-200 transition-colors"
+                          className="btn-3d-indigo px-3 py-1.5 rounded-lg text-xs"
                         >
                           <Check className="w-3.5 h-3.5" />
                           <span>Registrar Ciência</span>
@@ -383,7 +383,7 @@ export const OfficialNoticesView: React.FC<OfficialNoticesViewProps> = ({
                               noticeStatus: 'termo_recebido',
                             })
                           }
-                          className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-semibold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 rounded-lg border border-emerald-200 transition-colors"
+                          className="btn-3d-emerald px-3 py-1.5 rounded-lg text-xs"
                         >
                           <CheckCircle2 className="w-3.5 h-3.5" />
                           <span>Registrar Termo</span>

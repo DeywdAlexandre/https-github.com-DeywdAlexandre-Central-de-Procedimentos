@@ -2,6 +2,7 @@ import React from 'react';
 import { List, Calendar as CalendarIcon, Download, FileText, MessageSquareShare, Plus } from 'lucide-react';
 import { PoliceOfficer, JudicialHearing } from '../../types.ts';
 import { exportHearingsToCSV } from '../../lib/csv-export.ts';
+import { OfficerSearchSelect } from '../common/OfficerSearchSelect.tsx';
 
 interface HearingsFiltersProps {
   viewMode: 'tabela' | 'calendario';
@@ -75,19 +76,14 @@ export const HearingsFilters: React.FC<HearingsFiltersProps> = ({
           <option value="cancelada">Canceladas</option>
         </select>
 
-        {/* Filtro por Policial */}
-        <select
-          value={officerFilter}
-          onChange={(e) => setOfficerFilter(e.target.value)}
-          className="text-xs px-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-slate-800 font-medium max-w-xs truncate"
-        >
-          <option value="todos">Todos os Policiais</option>
-          {officers.map((off) => (
-            <option key={off.id} value={off.id}>
-              {off.rank} {off.fullName}
-            </option>
-          ))}
-        </select>
+        {/* Filtro por Policial com Busca Inteligente */}
+        <OfficerSearchSelect
+          officers={officers}
+          selectedOfficerId={officerFilter}
+          onSelectOfficer={setOfficerFilter}
+          placeholder="Buscar policial por nome, graduação ou matrícula..."
+          className="w-64 sm:w-72"
+        />
       </div>
 
       {/* Botões de Ação */}
@@ -95,7 +91,7 @@ export const HearingsFilters: React.FC<HearingsFiltersProps> = ({
         <button
           id="btn-export-hearings-csv"
           onClick={() => exportHearingsToCSV(filteredHearings)}
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors"
+          className="btn-3d-secondary px-3 py-1.5 text-xs rounded-lg"
         >
           <Download className="w-3.5 h-3.5 text-slate-500" />
           <span>Exportar CSV</span>
@@ -105,7 +101,7 @@ export const HearingsFilters: React.FC<HearingsFiltersProps> = ({
           <button
             id="btn-open-notice-import-hearings"
             onClick={onOpenOfficialNoticeImport}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-blue-700 bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded-lg shadow-2xs transition-colors"
+            className="btn-3d-secondary px-3 py-1.5 text-xs rounded-lg"
             title="Importar dados e policiais copiando o texto do Ofício Judicial"
           >
             <FileText className="w-3.5 h-3.5 text-blue-600" />
@@ -117,10 +113,10 @@ export const HearingsFilters: React.FC<HearingsFiltersProps> = ({
           <button
             id="btn-open-batch-import-hearings"
             onClick={onOpenBatchImport}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 rounded-lg shadow-2xs transition-colors"
+            className="btn-3d-emerald px-3 py-1.5 text-xs rounded-lg"
             title="Importar em lote do WhatsApp"
           >
-            <MessageSquareShare className="w-3.5 h-3.5 text-emerald-600" />
+            <MessageSquareShare className="w-3.5 h-3.5" />
             <span>Importar WhatsApp</span>
           </button>
         )}
@@ -129,7 +125,7 @@ export const HearingsFilters: React.FC<HearingsFiltersProps> = ({
           <button
             id="btn-new-hearing-main"
             onClick={onOpenNewHearing}
-            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-lg shadow-2xs shadow-blue-600/20 transition-colors"
+            className="btn-3d-primary px-3.5 py-1.5 text-xs rounded-lg"
           >
             <Plus className="w-3.5 h-3.5" />
             <span>Nova Audiência</span>

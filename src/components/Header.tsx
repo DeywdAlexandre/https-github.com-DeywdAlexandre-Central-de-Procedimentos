@@ -138,17 +138,17 @@ export const Header: React.FC<HeaderProps> = ({
               <button
                 id="btn-quick-batch-import"
                 onClick={onOpenBatchImport}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 rounded-lg shadow-2xs transition-colors"
+                className="btn-3d-emerald px-3 py-1.5 text-xs rounded-lg"
                 title="Importar texto copiado do WhatsApp"
               >
-                <MessageSquareShare className="w-3.5 h-3.5 text-emerald-600" />
+                <MessageSquareShare className="w-3.5 h-3.5" />
                 <span className="hidden sm:inline">Importar</span> WhatsApp
               </button>
 
               <button
                 id="btn-quick-official-notice-import"
                 onClick={onOpenOfficialNoticeImport}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-blue-700 bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded-lg shadow-2xs transition-colors"
+                className="btn-3d-secondary px-3 py-1.5 text-xs rounded-lg"
                 title="Importar audiência colando texto de Ofício Judicial"
               >
                 <FileText className="w-3.5 h-3.5 text-blue-600" />
@@ -158,7 +158,7 @@ export const Header: React.FC<HeaderProps> = ({
               <button
                 id="btn-quick-new-procedure"
                 onClick={onOpenNewProcedure}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-lg shadow-2xs shadow-blue-600/20 transition-colors"
+                className="btn-3d-primary px-3 py-1.5 text-xs rounded-lg"
               >
                 <Plus className="w-3.5 h-3.5" />
                 <span>+ Procedimento</span>
@@ -167,9 +167,9 @@ export const Header: React.FC<HeaderProps> = ({
               <button
                 id="btn-quick-new-hearing"
                 onClick={onOpenNewHearing}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-indigo-700 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 rounded-lg shadow-2xs transition-colors"
+                className="btn-3d-indigo px-3 py-1.5 text-xs rounded-lg"
               >
-                <CalendarDays className="w-3.5 h-3.5 text-indigo-600" />
+                <CalendarDays className="w-3.5 h-3.5" />
                 <span className="hidden sm:inline">+ Audiência</span>
               </button>
             </div>

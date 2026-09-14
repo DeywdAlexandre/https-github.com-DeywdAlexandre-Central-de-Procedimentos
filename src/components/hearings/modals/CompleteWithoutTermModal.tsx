@@ -88,14 +88,14 @@ export const CompleteWithoutTermModal: React.FC<CompleteWithoutTermModalProps> =
               type="button"
               onClick={onClose}
               disabled={isSubmitting}
-              className="px-3 py-1.5 text-xs font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-lg disabled:opacity-50"
+              className="btn-3d-secondary px-3.5 py-1.5 rounded-lg text-xs disabled:opacity-50"
             >
               Cancelar
             </button>
             <button
               type="submit"
               disabled={isSubmitting}
-              className="px-4 py-1.5 text-xs font-semibold text-white bg-emerald-700 hover:bg-emerald-800 rounded-lg flex items-center gap-1.5 disabled:opacity-50"
+              className="btn-3d-emerald px-4 py-1.5 rounded-lg text-xs flex items-center gap-1.5 disabled:opacity-50"
             >
               <CheckCircle2 className="w-3.5 h-3.5" />
               <span>{isSubmitting ? 'Salvando...' : 'Confirmar Realização'}</span>

@@ -266,13 +266,13 @@ export const CreateProcedureModal: React.FC<CreateProcedureModalProps> = ({
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 text-xs font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors"
+              className="btn-3d-secondary px-4 py-2 rounded-lg text-xs"
             >
               Cancelar
             </button>
             <button
               type="submit"
-              className="px-5 py-2 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-lg shadow-2xs shadow-blue-600/20 transition-colors"
+              className="btn-3d-primary px-5 py-2 rounded-lg text-xs"
             >
               {editingProc ? 'Salvar Alterações' : 'Criar Procedimento'}
             </button>

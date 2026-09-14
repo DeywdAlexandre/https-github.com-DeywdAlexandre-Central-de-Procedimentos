@@ -183,7 +183,7 @@ export const HearingNoticeModal: React.FC<HearingNoticeModalProps> = ({
         <div className="p-4 border-t border-slate-200 bg-slate-50 flex justify-end">
           <button
             onClick={onClose}
-            className="px-4 py-2 text-xs font-semibold text-white bg-slate-900 rounded-lg hover:bg-slate-800"
+            className="btn-3d-primary px-5 py-2 rounded-lg text-xs"
           >
             Concluir
           </button>

@@ -260,14 +260,14 @@ FRANCISCO ROBSON DOS S. DA SILVA CRUZ
                 <button
                   id="btn-import-another-notice"
                   onClick={handleReset}
-                  className="px-4 py-2 text-xs font-semibold text-emerald-800 bg-emerald-100 hover:bg-emerald-200 rounded-lg transition-colors"
+                  className="btn-3d-secondary px-4 py-2 rounded-lg text-xs"
                 >
                   Importar Outro Ofício
                 </button>
                 <button
                   id="btn-finish-notice-import"
                   onClick={onClose}
-                  className="px-4 py-2 text-xs font-semibold text-white bg-emerald-700 hover:bg-emerald-800 rounded-lg shadow-2xs transition-colors"
+                  className="btn-3d-emerald px-4 py-2 rounded-lg text-xs"
                 >
                   Fechar e Concluir
                 </button>
@@ -311,7 +311,7 @@ FRANCISCO ROBSON DOS S. DA SILVA CRUZ
                     type="button"
                     onClick={handleAnalyze}
                     disabled={analyzing || !rawText.trim()}
-                    className="inline-flex items-center gap-2 px-4 py-2 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg shadow-2xs shadow-blue-600/20 transition-all"
+                    className="btn-3d-primary px-4 py-2 rounded-lg text-xs disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {analyzing ? (
                       <>
@@ -638,7 +638,7 @@ FRANCISCO ROBSON DOS S. DA SILVA CRUZ
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 text-xs font-semibold text-slate-600 hover:text-slate-800 hover:bg-slate-200/70 rounded-lg transition-colors"
+              className="btn-3d-secondary px-4 py-2 rounded-lg text-xs"
             >
               Cancelar
             </button>
@@ -649,7 +649,7 @@ FRANCISCO ROBSON DOS S. DA SILVA CRUZ
                   id="btn-reset-notice-form"
                   type="button"
                   onClick={handleReset}
-                  className="px-3.5 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-200/80 rounded-lg transition-colors"
+                  className="btn-3d-secondary px-3.5 py-2 rounded-lg text-xs"
                 >
                   Limpar
                 </button>
@@ -660,7 +660,7 @@ FRANCISCO ROBSON DOS S. DA SILVA CRUZ
                 type="button"
                 onClick={handleCommit}
                 disabled={committing || !parsedData || !form.noticeNumber || !form.hearingDate}
-                className="inline-flex items-center gap-2 px-5 py-2 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg shadow-2xs shadow-blue-600/20 transition-all"
+                className="btn-3d-primary px-5 py-2 rounded-lg text-xs disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {committing ? (
                   <>

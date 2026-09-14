@@ -92,13 +92,13 @@ export const AddTimelineModal: React.FC<AddTimelineModalProps> = ({
             <button
               type="button"
               onClick={onClose}
-              className="px-3 py-1.5 text-xs font-semibold text-slate-600 bg-slate-100 rounded-lg"
+              className="btn-3d-secondary px-3.5 py-1.5 rounded-lg text-xs"
             >
               Cancelar
             </button>
             <button
               type="submit"
-              className="px-4 py-1.5 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-lg"
+              className="btn-3d-primary px-4 py-1.5 rounded-lg text-xs"
             >
               Gravar Andamento
             </button>

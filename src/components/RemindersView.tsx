@@ -218,7 +218,7 @@ export const RemindersView: React.FC<RemindersViewProps> = ({
                       {r.recipientPhone && r.status !== 'cancelado' && (
                         <button
                           onClick={() => handleOpenWhatsAppWeb(r)}
-                          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-white bg-emerald-600 hover:bg-emerald-700 rounded-lg shadow-2xs transition-colors"
+                          className="btn-3d-emerald px-3 py-1.5 text-xs rounded-lg"
                           title="Abrir WhatsApp Web pré-preenchido com esta mensagem"
                         >
                           <Send className="w-3.5 h-3.5" />
@@ -229,7 +229,7 @@ export const RemindersView: React.FC<RemindersViewProps> = ({
                       {isPending && (
                         <button
                           onClick={() => handleUpdateStatus(r, 'enviado')}
-                          className="px-2.5 py-1.5 text-xs font-semibold text-blue-700 bg-blue-50 hover:bg-blue-100 rounded-lg border border-blue-200"
+                          className="btn-3d-primary px-3 py-1.5 text-xs rounded-lg"
                           title="Marcar manualmente como enviado pela equipe"
                         >
                           Marcar Enviado
@@ -239,9 +239,9 @@ export const RemindersView: React.FC<RemindersViewProps> = ({
                       {isFailed && (
                         <button
                           onClick={() => handleUpdateStatus(r, 'pendente')}
-                          className="px-2.5 py-1.5 text-xs font-semibold text-amber-700 bg-amber-50 hover:bg-amber-100 rounded-lg border border-amber-200 flex items-center gap-1"
+                          className="btn-3d-amber px-3 py-1.5 text-xs rounded-lg"
                         >
-                          <RotateCcw className="w-3 h-3" />
+                          <RotateCcw className="w-3.5 h-3.5" />
                           <span>Reenviar</span>
                         </button>
                       )}
@@ -249,7 +249,7 @@ export const RemindersView: React.FC<RemindersViewProps> = ({
                       {r.status !== 'cancelado' && r.status !== 'lido' && (
                         <button
                           onClick={() => handleUpdateStatus(r, 'cancelado')}
-                          className="p-1.5 text-slate-400 hover:text-rose-600 rounded-lg"
+                          className="btn-3d-secondary p-1.5 text-slate-500 hover:text-rose-600 rounded-lg"
                           title="Cancelar lembrete"
                         >
                           <XCircle className="w-4 h-4" />

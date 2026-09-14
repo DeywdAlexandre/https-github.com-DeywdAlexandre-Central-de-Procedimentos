@@ -65,14 +65,14 @@ export const DidNotOccurModal: React.FC<DidNotOccurModalProps> = ({
               type="button"
               onClick={onClose}
               disabled={isSubmitting}
-              className="px-3 py-1.5 text-xs font-semibold text-slate-600 bg-slate-100 rounded-lg disabled:opacity-50"
+              className="btn-3d-secondary px-3.5 py-1.5 rounded-lg text-xs disabled:opacity-50"
             >
               Cancelar
             </button>
             <button
               type="submit"
               disabled={isSubmitting}
-              className="px-4 py-1.5 text-xs font-semibold text-white bg-rose-600 hover:bg-rose-700 rounded-lg disabled:opacity-50"
+              className="btn-3d-danger px-4 py-1.5 rounded-lg text-xs disabled:opacity-50"
             >
               {isSubmitting ? 'Gravando...' : 'Gravar Ocorrência'}
             </button>

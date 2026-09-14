@@ -165,7 +165,7 @@ export const DeadlinesTable: React.FC<DeadlinesTableProps> = ({
                     <button
                       id={`btn-confirm-dl-${dl.id}`}
                       onClick={() => onConfirmDeadline(dl)}
-                      className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-lg shadow-2xs transition-colors"
+                      className="btn-3d-primary px-3 py-1.5 rounded-lg text-xs"
                       title="Confirmar prazo explicitamente"
                     >
                       <Check className="w-3.5 h-3.5" />
@@ -176,7 +176,7 @@ export const DeadlinesTable: React.FC<DeadlinesTableProps> = ({
                   <button
                     id={`btn-extend-dl-${dl.id}`}
                     onClick={() => onOpenExtend(dl)}
-                    className="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors"
+                    className="btn-3d-secondary px-2.5 py-1.5 rounded-lg text-xs"
                     title="Prorrogar, suspender ou reabrir"
                   >
                     <RotateCcw className="w-3.5 h-3.5 text-slate-500" />
@@ -187,10 +187,11 @@ export const DeadlinesTable: React.FC<DeadlinesTableProps> = ({
                     <button
                       id={`btn-complete-dl-${dl.id}`}
                       onClick={() => onCompleteDeadline(dl)}
-                      className="p-1.5 text-slate-500 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors"
+                      className="btn-3d-emerald px-2.5 py-1.5 rounded-lg text-xs"
                       title="Concluir prazo"
                     >
-                      <CheckCircle2 className="w-4 h-4" />
+                      <CheckCircle2 className="w-3.5 h-3.5" />
+                      <span>Concluir</span>
                     </button>
                   )}
                 </div>

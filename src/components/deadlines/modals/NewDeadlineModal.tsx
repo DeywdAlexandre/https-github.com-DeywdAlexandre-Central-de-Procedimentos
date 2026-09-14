@@ -175,13 +175,13 @@ export const NewDeadlineModal: React.FC<NewDeadlineModalProps> = ({
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 text-xs font-semibold text-slate-600 bg-slate-100 rounded-lg"
+              className="btn-3d-secondary px-4 py-2 rounded-lg text-xs"
             >
               Cancelar
             </button>
             <button
               type="submit"
-              className="px-5 py-2 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-lg shadow-2xs"
+              className="btn-3d-primary px-5 py-2 rounded-lg text-xs"
             >
               Gravar Prazo
             </button>
