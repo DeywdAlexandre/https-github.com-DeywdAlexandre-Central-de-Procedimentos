@@ -40,7 +40,7 @@ export const HearingsView: React.FC<HearingsViewProps> = ({
   const [selectedYear, setSelectedYear] = useState<number>(new Date().getFullYear());
 
   // Filtros
-  const [statusFilter, setStatusFilter] = useState<string>('todos');
+  const [statusFilter, setStatusFilter] = useState<string>('agendada');
   const [officerFilter, setOfficerFilter] = useState<string>('todos');
 
   // Modais de Controle
@@ -137,18 +137,49 @@ export const HearingsView: React.FC<HearingsViewProps> = ({
     hearingOfficerId: number,
     patch: Record<string, any>
   ) => {
+    // 1. Atualização Otimista Imediata no modal aberto (0ms de delay)
+    setManagingOfficersHearing((prev) => {
+      if (!prev) return prev;
+      return {
+        ...prev,
+        officers: (prev.officers || []).map((ho) => {
+          if (ho.id !== hearingOfficerId) return ho;
+          return {
+            ...ho,
+            ...patch,
+            signedAt:
+              patch.signed === true
+                ? new Date().toISOString()
+                : patch.signed === false
+                ? null
+                : ho.signedAt,
+            acknowledgedAt:
+              patch.acknowledged === true
+                ? new Date().toISOString()
+                : patch.acknowledged === false
+                ? null
+                : ho.acknowledgedAt,
+            attendanceTermReceivedAt:
+              patch.attendanceTermReceived === true
+                ? new Date().toISOString()
+                : patch.attendanceTermReceived === false
+                ? null
+                : ho.attendanceTermReceivedAt,
+          };
+        }),
+      };
+    });
+
+    // 2. Envio assíncrono para o servidor
     try {
       await apiRequest(`/api/hearings/officers/${hearingOfficerId}/notice`, token, {
         method: 'PUT',
         body: JSON.stringify(patch),
       });
       await onRefresh();
-      if (managingOfficersHearing) {
-        const updatedH = hearings.find((h) => h.id === managingOfficersHearing.id);
-        if (updatedH) setManagingOfficersHearing(updatedH);
-      }
     } catch (err: any) {
       alert(`Erro ao atualizar status do ofício: ${err.message}`);
+      await onRefresh();
     }
   };
 

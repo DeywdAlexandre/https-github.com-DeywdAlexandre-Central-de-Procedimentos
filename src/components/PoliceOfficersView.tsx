@@ -12,6 +12,9 @@ import {
   Hash,
   Trash2,
   AlertTriangle,
+  LayoutGrid,
+  List as ListIcon,
+  Filter,
 } from 'lucide-react';
 import { PoliceOfficer } from '../types.ts';
 import { useAuth } from '../context/AuthContext.tsx';
@@ -48,7 +51,21 @@ export const PoliceOfficersView: React.FC<PoliceOfficersViewProps> = ({
   const { profile, token } = useAuth();
   const canEdit = profile?.role === 'editor' || profile?.role === 'administrador';
 
-  const [activeOnly, setActiveOnly] = useState(true);
+  // Modo de visualização: Grade vs Lista (com persistência)
+  const [viewMode, setViewMode] = useState<'grade' | 'lista'>(() => {
+    return (
+      (typeof localStorage !== 'undefined' &&
+        (localStorage.getItem('officers_view_mode') as 'grade' | 'lista')) ||
+      'grade'
+    );
+  });
+
+  // Filtros
+  const [localSearch, setLocalSearch] = useState('');
+  const [rankFilter, setRankFilter] = useState('todos');
+  const [statusFilter, setStatusFilter] = useState<'todos' | 'ativos' | 'inativos'>('ativos');
+  const [phoneFilter, setPhoneFilter] = useState<'todos' | 'com_fone' | 'sem_fone'>('todos');
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingOfficer, setEditingOfficer] = useState<PoliceOfficer | null>(null);
   const [deletingOfficer, setDeletingOfficer] = useState<PoliceOfficer | null>(null);
@@ -64,6 +81,26 @@ export const PoliceOfficersView: React.FC<PoliceOfficersViewProps> = ({
     notes: '',
     active: true,
   });
+
+  const handleSetViewMode = (mode: 'grade' | 'lista') => {
+    setViewMode(mode);
+    if (typeof localStorage !== 'undefined') {
+      localStorage.setItem('officers_view_mode', mode);
+    }
+  };
+
+  const hasActiveFilters =
+    Boolean(localSearch.trim()) ||
+    rankFilter !== 'todos' ||
+    statusFilter !== 'ativos' ||
+    phoneFilter !== 'todos';
+
+  const handleClearFilters = () => {
+    setLocalSearch('');
+    setRankFilter('todos');
+    setStatusFilter('ativos');
+    setPhoneFilter('todos');
+  };
 
   const handleOpenCreate = () => {
     setEditingOfficer(null);
@@ -133,66 +170,282 @@ export const PoliceOfficersView: React.FC<PoliceOfficersViewProps> = ({
   };
 
   const filteredOfficers = officers.filter((o) => {
-    if (activeOnly && !o.active) return false;
-    if (globalSearch) {
-      const term = globalSearch.toLowerCase();
+    // Filtro de Situação
+    if (statusFilter === 'ativos' && !o.active) return false;
+    if (statusFilter === 'inativos' && o.active) return false;
+
+    // Filtro de Telefone
+    if (phoneFilter === 'com_fone' && !o.phone) return false;
+    if (phoneFilter === 'sem_fone' && Boolean(o.phone)) return false;
+
+    // Filtro de Posto / Graduação
+    if (rankFilter !== 'todos') {
+      if (rankFilter === 'oficiais') {
+        const isOficial = ['Cel PM', 'Ten Cel PM', 'Maj PM', 'Cap PM', '1º Ten PM', '2º Ten PM'].includes(
+          o.rank
+        );
+        if (!isOficial) return false;
+      } else if (rankFilter === 'pracas') {
+        const isPraca = ['Subten PM', '1º Sgt PM', '2º Sgt PM', '3º Sgt PM', 'Cb PM', 'Sd PM'].includes(
+          o.rank
+        );
+        if (!isPraca) return false;
+      } else if (o.rank !== rankFilter) {
+        return false;
+      }
+    }
+
+    // Busca textual (Local ou Global)
+    const term = (localSearch || globalSearch).trim().toLowerCase();
+    if (term) {
       const match =
-        o.fullName.toLowerCase().includes(term) ||
+        (o.fullName || '').toLowerCase().includes(term) ||
         (o.shortName && o.shortName.toLowerCase().includes(term)) ||
         (o.badge && o.badge.toLowerCase().includes(term)) ||
-        (o.aliases && o.aliases.toLowerCase().includes(term));
+        (o.aliases && o.aliases.toLowerCase().includes(term)) ||
+        (o.rank && o.rank.toLowerCase().includes(term));
       if (!match) return false;
     }
+
     return true;
   });
 
   return (
-    <div className="space-y-6">
-      {/* Controles do Topo */}
-      <div className="bg-white p-4 rounded-xl border border-slate-200/90 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div className="flex items-center gap-4">
-          <label className="flex items-center gap-2 text-xs font-semibold text-slate-700 cursor-pointer">
+    <div className="space-y-4">
+      {/* Barra de Filtros e Controles */}
+      <div className="bg-white p-4 rounded-xl border border-slate-200/90 shadow-2xs space-y-3">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
+          {/* Campo de Busca Rápida */}
+          <div className="relative flex-1 max-w-md">
+            <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
             <input
-              type="checkbox"
-              checked={activeOnly}
-              onChange={(e) => setActiveOnly(e.target.checked)}
-              className="rounded-sm border-slate-300 text-blue-600 focus:ring-blue-500"
+              type="text"
+              value={localSearch}
+              onChange={(e) => setLocalSearch(e.target.value)}
+              placeholder="Buscar por nome, guerra, matrícula ou apelido..."
+              className="w-full pl-9 pr-8 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-800 placeholder:text-slate-400 focus:outline-hidden focus:border-blue-500 focus:bg-white transition-all"
             />
-            <span>Exibir apenas policiais em atividade</span>
-          </label>
-          <span className="text-xs text-slate-400">
-            Total: <strong>{filteredOfficers.length}</strong>
-          </span>
+            {localSearch && (
+              <button
+                type="button"
+                onClick={() => setLocalSearch('')}
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 p-0.5"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            )}
+          </div>
+
+          {/* Alternador de Modo de Visualização e Botão Novo Policial */}
+          <div className="flex items-center gap-2.5 self-end md:self-auto shrink-0">
+            {/* Toggle Grade / Lista */}
+            <div className="flex items-center bg-slate-100 p-1 rounded-lg border border-slate-200 text-xs">
+              <button
+                type="button"
+                onClick={() => handleSetViewMode('grade')}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md font-semibold transition-all ${
+                  viewMode === 'grade'
+                    ? 'bg-white text-slate-900 shadow-2xs'
+                    : 'text-slate-600 hover:text-slate-900'
+                }`}
+                title="Exibir em grade de cartões"
+              >
+                <LayoutGrid className="w-3.5 h-3.5" />
+                <span>Grade</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => handleSetViewMode('lista')}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md font-semibold transition-all ${
+                  viewMode === 'lista'
+                    ? 'bg-white text-slate-900 shadow-2xs'
+                    : 'text-slate-600 hover:text-slate-900'
+                }`}
+                title="Exibir em tabela / lista compacta"
+              >
+                <ListIcon className="w-3.5 h-3.5" />
+                <span>Lista</span>
+              </button>
+            </div>
+
+            {canEdit && (
+              <button
+                id="btn-add-officer-main"
+                onClick={handleOpenCreate}
+                className="btn-3d-primary px-3.5 py-1.5 rounded-lg text-xs shrink-0"
+              >
+                <Plus className="w-3.5 h-3.5" />
+                <span>Novo Policial</span>
+              </button>
+            )}
+          </div>
         </div>
 
-        {canEdit && (
-          <button
-            id="btn-add-officer-main"
-            onClick={handleOpenCreate}
-            className="btn-3d-primary px-3.5 py-1.5 rounded-lg text-xs shrink-0"
-          >
-            <Plus className="w-3.5 h-3.5" />
-            <span>Novo Policial</span>
-          </button>
-        )}
+        {/* Linha de Dropdowns de Filtragem */}
+        <div className="pt-2 border-t border-slate-100 flex flex-wrap items-center justify-between gap-3 text-xs">
+          <div className="flex flex-wrap items-center gap-2">
+            {/* Filtro por Posto / Graduação */}
+            <select
+              value={rankFilter}
+              onChange={(e) => setRankFilter(e.target.value)}
+              className="px-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-slate-800 font-medium"
+            >
+              <option value="todos">Todos os Postos / Graduações</option>
+              <option value="oficiais">⭐ Oficiais (Cel, Ten Cel, Maj, Cap, Ten)</option>
+              <option value="pracas">🛡️ Praças (Subten, Sgt, Cb, Sd)</option>
+              <optgroup label="Posto Específico">
+                {RANKS.map((r) => (
+                  <option key={r} value={r}>
+                    {r}
+                  </option>
+                ))}
+              </optgroup>
+            </select>
+
+            {/* Filtro de Situação */}
+            <select
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value as any)}
+              className="px-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-slate-800 font-medium"
+            >
+              <option value="ativos">Apenas Ativos no Efetivo</option>
+              <option value="inativos">Inativos</option>
+              <option value="todos">Todas as Situações</option>
+            </select>
+
+            {/* Filtro de Telefone / Contato */}
+            <select
+              value={phoneFilter}
+              onChange={(e) => setPhoneFilter(e.target.value as any)}
+              className="px-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-slate-800 font-medium"
+            >
+              <option value="todos">Todos os Contatos</option>
+              <option value="com_fone">Com WhatsApp / Telefone</option>
+              <option value="sem_fone">Sem Telefone Cadastrado</option>
+            </select>
+
+            {hasActiveFilters && (
+              <button
+                type="button"
+                onClick={handleClearFilters}
+                className="text-xs text-rose-600 hover:text-rose-800 font-semibold flex items-center gap-1 px-2 py-1 rounded hover:bg-rose-50 transition-colors"
+                title="Limpar todos os filtros"
+              >
+                <X className="w-3.5 h-3.5" />
+                <span>Limpar Filtros</span>
+              </button>
+            )}
+          </div>
+
+          <div className="text-xs text-slate-500 font-medium">
+            Exibindo <strong>{filteredOfficers.length}</strong> de {officers.length} policiais
+          </div>
+        </div>
       </div>
 
-      {/* Grade / Lista de Policiais */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {loading ? (
-          <div className="col-span-full p-12 text-center text-slate-500 text-sm">
-            Carregando cadastro de policiais...
+      {/* Conteúdo: Lista / Tabela vs Grade de Cards */}
+      {loading ? (
+        <div className="p-12 text-center text-slate-500 text-sm bg-white rounded-xl border border-slate-200">
+          Carregando cadastro de policiais...
+        </div>
+      ) : filteredOfficers.length === 0 ? (
+        <div className="p-12 text-center text-slate-500 space-y-2 bg-white rounded-xl border border-slate-200">
+          <Shield className="w-8 h-8 text-slate-300 mx-auto" />
+          <p className="font-semibold text-slate-700 text-sm">Nenhum policial encontrado</p>
+          <p className="text-xs text-slate-400">
+            Tente ajustar os filtros de busca ou cadastre novos policiais militares.
+          </p>
+        </div>
+      ) : viewMode === 'lista' ? (
+        /* VISUALIZAÇÃO EM TABELA / LISTA COMPACTA */
+        <div className="bg-white rounded-xl border border-slate-200/90 shadow-2xs overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-xs">
+              <thead className="bg-slate-50/80 border-b border-slate-200 text-slate-500 font-semibold uppercase tracking-wider text-[10px]">
+                <tr>
+                  <th className="py-3 px-4">Posto / Graduação</th>
+                  <th className="py-3 px-4">Policial Militar</th>
+                  <th className="py-3 px-4">Matrícula</th>
+                  <th className="py-3 px-4">Telefone / WhatsApp</th>
+                  <th className="py-3 px-4">Situação</th>
+                  {canEdit && <th className="py-3 px-4 text-right">Ações</th>}
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {filteredOfficers.map((off) => (
+                  <tr key={off.id} className="hover:bg-slate-50/70 transition-colors">
+                    <td className="py-3 px-4 whitespace-nowrap">
+                      <span className="px-2 py-0.5 rounded-md text-[10px] font-bold bg-blue-50 text-blue-800 border border-blue-200">
+                        {off.rank}
+                      </span>
+                    </td>
+                    <td className="py-3 px-4">
+                      <div className="font-bold text-slate-900">{off.fullName}</div>
+                      {(off.shortName || off.aliases) && (
+                        <div className="text-[11px] text-slate-500 font-normal mt-0.5">
+                          {off.shortName ? `Guerra: ${off.shortName}` : ''}
+                          {off.shortName && off.aliases ? ' • ' : ''}
+                          {off.aliases ? `Apelidos: ${off.aliases}` : ''}
+                        </div>
+                      )}
+                    </td>
+                    <td className="py-3 px-4 font-mono text-slate-600 whitespace-nowrap">
+                      {off.badge ? `#${off.badge}` : <span className="text-slate-300">-</span>}
+                    </td>
+                    <td className="py-3 px-4 whitespace-nowrap">
+                      {off.phone ? (
+                        <div className="flex items-center gap-1.5 text-slate-700 font-medium">
+                          <Phone className="w-3.5 h-3.5 text-emerald-600" />
+                          <span>{off.phone}</span>
+                        </div>
+                      ) : (
+                        <span className="text-slate-300 italic text-[11px]">Não informado</span>
+                      )}
+                    </td>
+                    <td className="py-3 px-4 whitespace-nowrap">
+                      <span
+                        className={`px-2 py-0.5 rounded-full text-[10px] font-semibold ${
+                          off.active
+                            ? 'bg-emerald-50 text-emerald-700'
+                            : 'bg-slate-100 text-slate-500'
+                        }`}
+                      >
+                        {off.active ? 'Ativo' : 'Inativo'}
+                      </span>
+                    </td>
+                    {canEdit && (
+                      <td className="py-3 px-4 text-right whitespace-nowrap">
+                        <div className="inline-flex items-center gap-1.5">
+                          <button
+                            id={`btn-table-edit-officer-${off.id}`}
+                            onClick={() => handleOpenEdit(off)}
+                            className="btn-3d-secondary px-2.5 py-1 text-xs text-blue-600 hover:text-blue-700"
+                            title="Editar policial"
+                          >
+                            <Edit2 className="w-3 h-3 text-blue-500" />
+                            <span>Editar</span>
+                          </button>
+                          <button
+                            id={`btn-table-delete-officer-${off.id}`}
+                            onClick={() => setDeletingOfficer(off)}
+                            className="btn-3d-secondary px-2 py-1 text-xs text-rose-600 hover:text-rose-700"
+                            title="Excluir policial do sistema"
+                          >
+                            <Trash2 className="w-3 h-3 text-rose-500" />
+                          </button>
+                        </div>
+                      </td>
+                    )}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
-        ) : filteredOfficers.length === 0 ? (
-          <div className="col-span-full p-12 text-center text-slate-500 space-y-2 bg-white rounded-xl border border-slate-200">
-            <Shield className="w-8 h-8 text-slate-300 mx-auto" />
-            <p className="font-semibold text-slate-700 text-sm">Nenhum policial encontrado</p>
-            <p className="text-xs text-slate-400">
-              Cadastre novos policiais ou importe diretamente de mensagens de convocação.
-            </p>
-          </div>
-        ) : (
-          filteredOfficers.map((off) => (
+        </div>
+      ) : (
+        /* VISUALIZAÇÃO EM GRADE DE CARDS */
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {filteredOfficers.map((off) => (
             <div
               key={off.id}
               id={`officer-card-${off.id}`}
@@ -263,9 +516,9 @@ export const PoliceOfficersView: React.FC<PoliceOfficersViewProps> = ({
                 </div>
               )}
             </div>
-          ))
-        )}
-      </div>
+          ))}
+        </div>
+      )}
 
       {/* Modal Criar / Editar Policial */}
       {isModalOpen && (

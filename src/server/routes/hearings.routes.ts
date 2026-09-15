@@ -335,8 +335,13 @@ hearingsRouter.put('/officers/:id/notice', requireAuth, requireEditor, async (re
     if (notes !== undefined) updateData.notes = notes;
 
     if (signed === true) updateData.signedAt = new Date();
+    else if (signed === false) updateData.signedAt = null;
+
     if (acknowledged === true) updateData.acknowledgedAt = new Date();
+    else if (acknowledged === false) updateData.acknowledgedAt = null;
+
     if (attendanceTermReceived === true) updateData.attendanceTermReceivedAt = new Date();
+    else if (attendanceTermReceived === false) updateData.attendanceTermReceivedAt = null;
 
     const [updated] = await db
       .update(hearingOfficers)
